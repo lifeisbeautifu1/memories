@@ -4,29 +4,33 @@ import { createPost, editPost } from '../features/posts/postsSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 const initialState = {
-  creator: '',
+  name: '',
   title: '',
   message: '',
   tags: '',
   selectedFile: '',
-  likeCount: 0,
+  likes: [],
+  creator: '',
 };
 
 const PostForm = () => {
   const [formState, setFormState] = React.useState(initialState);
   const dispatch = useAppDispatch();
   const { posts, selectedId } = useAppSelector((state) => state.posts);
+  const { user } = useAppSelector((state) => state.auth);
   React.useEffect(() => {
     if (selectedId) {
       const post = posts.find((p) => p._id === selectedId);
       if (post) {
         setFormState({
-          creator: post?.creator,
+          name: user?.name!,
           title: post?.title,
           message: post?.message,
           tags: post?.tags.join(','),
           selectedFile: post?.selectedFile,
-          likeCount: post?.likeCount!,
+          //@ts-ignore
+          likes: post?.likes!,
+          creator: user?.id!,
         });
       }
     }
@@ -45,7 +49,14 @@ const PostForm = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedId)
-      dispatch(createPost({ ...formState, tags: formState.tags.split(',') }));
+      dispatch(
+        createPost({
+          ...formState,
+          creator: user?.id!,
+          name: user?.name!,
+          tags: formState.tags.split(','),
+        })
+      );
     else
       dispatch(
         editPost({
@@ -64,14 +75,14 @@ const PostForm = () => {
     <div className="form">
       <h2>{selectedId ? 'Edit' : 'Create'} Memory</h2>
       <form onSubmit={handleSubmit}>
-        <input
+        {/* <input
           className="form-control"
           placeholder="Creator"
           type="text"
           name="creator"
           value={formState.creator}
           onChange={handleChange}
-        />
+        /> */}
         <input
           className="form-control"
           placeholder="Title"

@@ -2,11 +2,12 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import postsService from './postsService';
 
 export interface Post {
+  name: string;
   creator: string;
   title: string;
   message: string;
   tags: string[];
-  likeCount?: number;
+  likes?: string[];
   _id?: string;
   createdAt?: string;
   selectedFile: string;
@@ -16,43 +17,98 @@ interface AppState {
   posts: Post[];
   selectedId: string;
   isLoading: boolean;
+  message: string | unknown;
 }
 
 const initialState: AppState = {
   posts: [],
   selectedId: '',
   isLoading: false,
+  message: '',
 };
 
-export const getPosts = createAsyncThunk('/posts/getPosts', async () => {
-  return await postsService.getPosts();
-});
+export const getPosts = createAsyncThunk(
+  '/posts/getPosts',
+  async (_, thunkAPI) => {
+    try {
+      return await postsService.getPosts();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const createPost = createAsyncThunk(
   '/posts/createPost',
-  async (postData: Post) => {
-    return await postsService.createPost(postData);
+  async (postData: Post, thunkAPI) => {
+    try {
+      return await postsService.createPost(postData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
   }
 );
 
 export const editPost = createAsyncThunk(
   '/posts/editPost',
-  async (postData: any) => {
-    return await postsService.editPost(postData);
+  async (postData: any, thunkAPI) => {
+    try {
+      return await postsService.editPost(postData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
   }
 );
 
 export const deletePost = createAsyncThunk(
   '/posts/deletePost',
-  async (id: string) => {
-    return await postsService.deletePost(id);
+  async (id: string, thunkAPI) => {
+    try {
+      return await postsService.deletePost(id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
   }
 );
 
 export const likePost = createAsyncThunk(
-  'posts/likePost',
-  async (id: string) => {
-    return await postsService.likePost(id);
+  '/posts/likePost',
+  async (id: string, thunkAPI) => {
+    try {
+      return await postsService.likePost(id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
   }
 );
 
@@ -62,6 +118,9 @@ export const postsSlice = createSlice({
   reducers: {
     selectId: (state, action) => {
       state.selectedId = action.payload;
+    },
+    reset: (state, action) => {
+      state.message = '';
     },
   },
   extraReducers: (builder) => {
@@ -79,7 +138,7 @@ export const postsSlice = createSlice({
     );
     builder.addCase(getPosts.rejected, (state, action) => {
       state.isLoading = false;
-      console.log('get posts rejected...');
+      state.message = action.payload;
     });
     builder.addCase(createPost.pending, (state, action) => {
       state.isLoading = true;
@@ -96,6 +155,7 @@ export const postsSlice = createSlice({
     builder.addCase(createPost.rejected, (state, action) => {
       state.isLoading = false;
       console.log('create post rejected...');
+      state.message = action.payload;
     });
     builder.addCase(deletePost.pending, (state, action) => {
       state.isLoading = true;
@@ -111,6 +171,7 @@ export const postsSlice = createSlice({
     builder.addCase(deletePost.rejected, (state, action) => {
       state.isLoading = false;
       console.log('delete post rejected...');
+      state.message = action.payload;
     });
     builder.addCase(likePost.pending, (state, action) => {
       state.isLoading = true;
@@ -126,6 +187,7 @@ export const postsSlice = createSlice({
     builder.addCase(likePost.rejected, (state, action) => {
       state.isLoading = false;
       console.log('like post rejected...');
+      state.message = action.payload;
     });
     builder.addCase(editPost.pending, (state, action) => {
       state.isLoading = true;
@@ -142,10 +204,11 @@ export const postsSlice = createSlice({
     builder.addCase(editPost.rejected, (state, action) => {
       state.isLoading = false;
       console.log('edit post rejected...');
+      state.message = action.payload;
     });
   },
 });
 
-export const { selectId } = postsSlice.actions;
+export const { selectId, reset } = postsSlice.actions;
 
 export default postsSlice.reducer;

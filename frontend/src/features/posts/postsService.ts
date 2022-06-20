@@ -1,30 +1,40 @@
 import axios from 'axios';
 import { Post } from './postsSlice';
 
-const API_URL = '/posts';
+const API = axios.create({ baseURL: 'http://localhost:5000/posts' });
+
+API.interceptors.request.use((req) => {
+  if (localStorage.getItem('user')) {
+    //@ts-ignore
+    req.headers.Authorization = `Bearer ${
+      JSON.parse(localStorage.getItem('user') as string)?.token
+    }`;
+  }
+  return req;
+});
 
 const getPosts = async () => {
-  const res = await axios.get(API_URL);
+  const res = await API.get('/');
   return res.data;
 };
 
 const createPost = async (postData: Post) => {
-  const res = await axios.post(API_URL, postData);
+  const res = await API.post('/', postData);
   return res.data;
 };
 
 const deletePost = async (id: string) => {
-  const res = await axios.delete(`${API_URL}/${id}`);
+  const res = await API.delete('/' + id);
   return res.data;
 };
 
 const likePost = async (id: string) => {
-  const res = await axios.patch(`${API_URL}/like/${id}`);
+  const res = await API.patch(`/like/${id}`);
   return res.data;
 };
 
 const editPost = async (postData: Post) => {
-  const res = await axios.patch(`${API_URL}/${postData._id}`, postData);
+  const res = await API.patch(`/${postData._id}`, postData);
   return res.data;
 };
 

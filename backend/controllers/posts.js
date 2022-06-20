@@ -25,12 +25,15 @@ export const editPost = async (req, res) => {
 }
 
 export const likePost = async (req, res) => {
-    let post = await Posts.findById(req.params.id);
-    post =  await Posts.findByIdAndUpdate(req.params.id, {
-        likeCount: post.likeCount + 1,
-    }, {
-        new: true,
-        runValidators: true,
-    });
-    return res.status(StatusCodes.OK).json(post);
-}
+  let post = await Posts.findById(req.params.id);
+  if (post.likes.includes(req.userId)) {
+    post.likes = post.likes.filter((id) => id !== req.userId);
+  } else {
+    post.likes.push(req.userId);
+  }
+  const updatedPost = await Posts.findByIdAndUpdate(req.params.id, post, {
+    new: true,
+    runValidators: true,
+  });
+  return res.status(StatusCodes.OK).json(updatedPost);
+};

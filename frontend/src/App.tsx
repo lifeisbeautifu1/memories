@@ -1,31 +1,23 @@
-import React from 'react';
-import { useAppDispatch, useAppSelector } from './hooks';
-import { getPosts } from './features/posts/postsSlice';
 import Navbar from './components/Navbar';
-import PostForm from './components/PostForm';
-import PostsContainer from './components/PostsContainer';
-import ClipLoader from 'react-spinners/ClipLoader';
+import Home from './pages/Home';
+import Auth from './pages/Auth';
+import { Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
-  const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector((state) => state.posts);
-  React.useEffect(() => {
-    dispatch(getPosts());
-  }, [dispatch]);
   return (
-    <div className="container">
-      <Navbar />
-      <div className="grid">
-        {isLoading ? (
-          <ClipLoader size={150} color={'#fff'} />
-        ) : (
-          <PostsContainer />
-        )}
-        <div className="form-wrapper">
-          <PostForm />
-        </div>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_ID || ''}>
+      <div className="container">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+        </Routes>
       </div>
-    </div>
+      <ToastContainer />
+    </GoogleOAuthProvider>
   );
 };
 

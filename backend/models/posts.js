@@ -1,32 +1,39 @@
 import mongoose from 'mongoose';
 
-const postsSchema = new mongoose.Schema({
+const postsSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: [true, 'Please provide title for post']
+      type: String,
+      required: [true, 'Please provide title for post'],
+    },
+    name: {
+      type: String,
+      required: [true, 'Please provide creator name'],
     },
     creator: {
-        type: String,
-        required: [true, 'Please provide creator name']
+      type: String,
+      required: [true, 'Please provide creator id'],
     },
     message: {
-        type: String,
-        required: [true, 'Please provide message of the post']
+      type: String,
+      required: [true, 'Please provide message of the post'],
     },
     tags: {
-        type: [String]
+      type: [String],
     },
     selectedFile: {
-        type: String,
-        required: [true, 'Please provide thumbnail for post'],
+      type: String,
+      required: [true, 'Please provide thumbnail for post'],
     },
-    likeCount: {
-        type: Number,
-        default: 0,
-    }
-}, {
+    likes: {
+      type: [String],
+      default: 0,
+    },
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
 const Posts = mongoose.model('Posts', postsSchema);
 
