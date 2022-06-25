@@ -65,17 +65,19 @@ const Auth = () => {
   };
 
   return (
-    <div className="auth-form">
-      <header>
-        <FcLock className="auth-icon" />
-        <h2>{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+    <div className="bg-white mt-20 p-8 rounded shadow-lg w-[400px] m-auto flex flex-col gap-4">
+      <header className="flex flex-col items-center justify-center gap-2">
+        <FcLock className="text-4xl" />
+        <h2 className="font-bold text-2xl">
+          {isSignUp ? 'Sign Up' : 'Sign In'}
+        </h2>
       </header>
       {isSignUp ? (
-        <form onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
-            className="form-control"
+            className="p-2 bg-gray-100 rounded outline-black"
             value={formData.name}
             placeholder="Name"
             onChange={handleChange}
@@ -84,51 +86,59 @@ const Auth = () => {
             type="email"
             name="email"
             value={formData.email}
-            className="form-control"
+            className="p-2 bg-gray-100 rounded outline-black"
             placeholder="Email"
             onChange={handleChange}
           />
-          <div>
+          <div className="relative">
             <input
               type={isShow ? 'text' : 'password'}
               name="password"
-              className="form-control"
+              className="p-2 bg-gray-100 rounded outline-black w-full"
               value={formData.password}
               placeholder="Password"
               onChange={handleChange}
             />
             {!isShow ? (
-              <MdVisibility onClick={togglePassword} className="show-icon" />
+              <MdVisibility
+                onClick={togglePassword}
+                className="absolute top-2.5 right-2 text-xl hover:text-gray-600 cursor-pointer"
+              />
             ) : (
               <AiFillEyeInvisible
                 onClick={togglePassword}
-                className="show-icon"
+                className="absolute top-2.5 right-2 text-xl hover:text-gray-600 cursor-pointer"
               />
             )}
           </div>
-          <div>
-            <input
-              type="password"
-              name="password2"
-              className="form-control"
-              value={formData.password2}
-              placeholder="Repeat password"
-              onChange={handleChange}
-            />
-          </div>
+
+          <input
+            type="password"
+            name="password2"
+            className="p-2 bg-gray-100 rounded outline-black"
+            value={formData.password2}
+            placeholder="Repeat password"
+            onChange={handleChange}
+          />
+
           <button type="submit" className="btn">
             Sign Up
           </button>
 
-          <span onClick={toggleSignUp}>Already have an account? sign in</span>
+          <span
+            className="text-gray-500 cursor-pointer text-right capitalize"
+            onClick={toggleSignUp}
+          >
+            Already have an account? sign in
+          </span>
         </form>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="email"
             name="email"
             value={formData.email}
-            className="form-control"
+            className="p-2 bg-gray-100 rounded outline-black"
             placeholder="Email"
             onChange={handleChange}
           />
@@ -136,7 +146,7 @@ const Auth = () => {
             type="password"
             name="password"
             value={formData.password}
-            className="form-control"
+            className="p-2 bg-gray-100 rounded outline-black"
             placeholder="Password"
             onChange={handleChange}
           />
@@ -167,7 +177,12 @@ const Auth = () => {
             }}
           />
 
-          <span onClick={toggleSignUp}>don't have an account? sign up</span>
+          <span
+            className="text-gray-500 cursor-pointer text-right capitalize"
+            onClick={toggleSignUp}
+          >
+            don't have an account? sign up
+          </span>
         </form>
       )}
     </div>

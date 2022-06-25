@@ -1,6 +1,6 @@
 import React from 'react';
 import FileBase from 'react-file-base64';
-import { createPost, editPost } from '../features/posts/postsSlice';
+import { createPost, editPost, selectId } from '../features/posts/postsSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
 
 const initialState = {
@@ -70,60 +70,75 @@ const PostForm = () => {
 
   const clearForm = () => {
     setFormState(initialState);
+    dispatch(selectId(0));
   };
+
+  if (!user) {
+    return (
+      <div className="p-8 bg-white border border-gray-100 rounded-lg shadow-lg flex justify-center items-center">
+        <h3 className="text-center font-bold text-xl">
+          Please Sign In to create your own memories and like other memories!
+        </h3>
+      </div>
+    );
+  }
   return (
-    <div className="form">
-      <h2>{selectedId ? 'Edit' : 'Create'} Memory</h2>
-      <form onSubmit={handleSubmit}>
-        {/* <input
-          className="form-control"
-          placeholder="Creator"
-          type="text"
-          name="creator"
-          value={formState.creator}
-          onChange={handleChange}
-        /> */}
-        <input
-          className="form-control"
-          placeholder="Title"
-          type="text"
-          name="title"
-          value={formState.title}
-          onChange={handleChange}
-        />
-        <textarea
-          className="form-control"
-          placeholder="Message"
-          name="message"
-          value={formState.message}
-          onChange={handleChange}
-        />
-        <input
-          className="form-control"
-          placeholder="Tags (coma separated)"
-          type="text"
-          name="tags"
-          value={formState.tags}
-          onChange={handleChange}
-        />
-        <FileBase
-          type="file"
-          multiple={false}
-          //@ts-ignore
-          onDone={({ base64 }) =>
-            setFormState((prevState) => ({
-              ...prevState,
-              selectedFile: base64,
-            }))
-          }
-        />
-        <button className="btn" type="submit">
-          submit
-        </button>
-        <button className="btn" onClick={clearForm}>
-          clear
-        </button>
-      </form>
+    <div className="flex justify-center items-start">
+      <div
+        className="p-4 bg-white rounded shadow border border-gray-100
+    flex flex-col gap-4 overflow-hidden"
+      >
+        <h2 className="font-bold">{selectedId ? 'Edit' : 'Create'} Memory</h2>
+        <form
+          className="flex flex-col justify-between gap-4"
+          onSubmit={handleSubmit}
+        >
+          <input
+            className="rounded p-2 bg-gray-100 outline-gray-700"
+            placeholder="Title"
+            type="text"
+            name="title"
+            value={formState.title}
+            onChange={handleChange}
+          />
+          <textarea
+            className="rounded p-2 bg-gray-100 h-[100px] outline-gray-700"
+            placeholder="Message"
+            name="message"
+            value={formState.message}
+            onChange={handleChange}
+          />
+          <input
+            className="rounded p-2 bg-gray-100 outline-gray-700"
+            placeholder="Tags (coma separated)"
+            type="text"
+            name="tags"
+            value={formState.tags}
+            onChange={handleChange}
+          />
+
+          <div className="max-w-[250px]">
+            <FileBase
+              type="file"
+              multiple={false}
+              //@ts-ignore
+              onDone={({ base64 }) => {
+                setFormState((prevState) => ({
+                  ...prevState,
+                  selectedFile: base64,
+                }));
+              }}
+            />
+          </div>
+
+          <button className="btn" type="submit">
+            submit
+          </button>
+          <span className="text-center btn cursor-pointer" onClick={clearForm}>
+            clear
+          </span>
+        </form>
+      </div>
     </div>
   );
 };
