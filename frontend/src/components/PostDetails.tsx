@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { RingLoader } from 'react-spinners';
 import moment from 'moment';
+import CommentSection from './CommentSection';
 
 const PostDetails = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const PostDetails = () => {
   const { post, posts, isLoading, message } = useAppSelector(
     (state) => state.posts
   );
+  const { user } = useAppSelector((state) => state.auth);
   useEffect(() => {
     if (message) toast.error(String(message));
     dispatch(reset({}));
@@ -39,15 +41,18 @@ const PostDetails = () => {
   const recommendedPosts = posts.filter((rec) => rec._id !== post._id);
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full p-6 bg-white rounded-lg shadow-lg grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-bold capitalize">{post.title}</h1>
-          <h2 className="font-bold text-gray-400">
-            {post.tags.map((tag) => `#${tag} `)}
-          </h2>
-          <p>{post.message}</p>
-          <p>Created by: {post.name}</p>
-          <p>{moment(post.createdAt).fromNow()}</p>
+      <div className="w-full p-6 bg-white rounded-lg shadow-lg grid md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4 justify-between">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-3xl font-bold capitalize">{post.title}</h1>
+            <h2 className="font-bold text-gray-400">
+              {post.tags.map((tag) => `#${tag} `)}
+            </h2>
+            <p>{post.message}</p>
+            <p>Created by: {post.name}</p>
+            <p>{moment(post.createdAt).fromNow()}</p>
+          </div>
+          <CommentSection post={post} />
         </div>
         <div className="w-full">
           <img

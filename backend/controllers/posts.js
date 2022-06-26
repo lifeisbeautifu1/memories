@@ -63,3 +63,25 @@ export const likePost = async (req, res) => {
   });
   return res.status(StatusCodes.OK).json(updatedPost);
 };
+
+export const commentOnPost = async (req, res) => {
+  const { name, comment } = req.body;
+  if (!name || !comment)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ comment: 'Please provide name and comment for the comment.' });
+  const { id: PostID } = req.params;
+  const updatedPost = await Posts.findByIdAndUpdate(
+    PostID,
+    {
+      $push: {
+        comments: `${name}: ${comment}`,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(StatusCodes.OK).json(updatedPost);
+};

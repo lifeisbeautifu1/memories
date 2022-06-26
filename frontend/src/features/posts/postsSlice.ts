@@ -11,6 +11,7 @@ export interface Post {
   _id?: string;
   createdAt?: string;
   selectedFile: string;
+  comments?: string[];
 }
 
 export interface SearchQuery {
@@ -157,6 +158,30 @@ export const likePost = createAsyncThunk(
   }
 );
 
+interface CommentOnPost {
+  id: string;
+  name: string;
+  comment: string;
+}
+
+export const commentOnPost = createAsyncThunk(
+  '/posts/commentOnPost',
+  async (data: CommentOnPost, thunkAPI) => {
+    try {
+      const { name, comment, id } = data;
+      return await postsService.commentOnPost(name, comment, id);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const postsSlice = createSlice({
   name: 'posts',
   initialState,
@@ -255,19 +280,36 @@ export const postsSlice = createSlice({
     });
 
     builder.addCase(likePost.pending, (state, action) => {
-      state.isLoading = true;
+      // state.isLoading = true;
       console.log('like post pending...');
     });
     builder.addCase(likePost.fulfilled, (state, action) => {
       console.log('like post fulfilled');
-      state.isLoading = false;
+      // state.isLoading = false;
       state.posts = state.posts.map((post) => {
         return post._id === action.payload._id ? action.payload : post;
       });
     });
     builder.addCase(likePost.rejected, (state, action) => {
-      state.isLoading = false;
+      // state.isLoading = false;
       console.log('like post rejected...');
+      state.message = action.payload;
+    });
+
+    builder.addCase(commentOnPost.pending, (state, action) => {
+      // state.isLoading = true;
+      console.log('comment on post pending...');
+    });
+    builder.addCase(commentOnPost.fulfilled, (state, action) => {
+      console.log('comment on post fulfilled');
+      // state.isLoading = false;
+      state.posts = state.posts.map((post) => {
+        return post._id === action.payload._id ? action.payload : post;
+      });
+    });
+    builder.addCase(commentOnPost.rejected, (state, action) => {
+      // state.isLoading = false;
+      console.log('comment on post rejected...');
       state.message = action.payload;
     });
 

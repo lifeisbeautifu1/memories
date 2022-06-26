@@ -31,7 +31,6 @@ const Home = () => {
     dispatch(reset({}));
     if (!searchQuery && !tags) dispatch(getPosts(+page));
     if (searchQuery || tags) {
-      console.log(searchQuery, tags);
       dispatch(
         getPostsBySearch({
           searchTerm: searchQuery,

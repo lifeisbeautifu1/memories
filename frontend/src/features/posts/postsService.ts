@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { idText } from 'typescript';
 import { Post, SearchQuery } from './postsSlice';
 
 const API = axios.create({ baseURL: 'http://localhost:5000/posts' });
@@ -52,6 +53,15 @@ const editPost = async (postData: Post) => {
   return res.data;
 };
 
+const commentOnPost = async (name: string, comment: string, id: string) => {
+  console.log('hello');
+  const res = await API.post('/comment/' + id, {
+    name,
+    comment,
+  });
+  return res.data;
+};
+
 const postsService = {
   getPosts,
   getPost,
@@ -60,6 +70,7 @@ const postsService = {
   likePost,
   editPost,
   getPostsBySearch,
+  commentOnPost,
 };
 
 export default postsService;
