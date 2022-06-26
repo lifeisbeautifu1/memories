@@ -2,9 +2,35 @@ import Posts from '../models/posts.js'
 import { StatusCodes } from 'http-status-codes';
 
 export const getPosts = async (req, res) => {
-    const posts = await Posts.find();
-    res.status(StatusCodes.OK).json(posts);
-}
+  const { page } = req.query;
+  const LIMIT = 6;
+  const startIndex = (page - 1) * LIMIT;
+  const total = await Posts.countDocuments();
+  const posts = await Posts.find()
+    .sort({ createdAt: -1 })
+    .limit(LIMIT)
+    .skip(startIndex);
+  res.status(StatusCodes.OK).json({
+    posts,
+    currentPage: +page,
+    numberOfPages: Math.ceil(total / LIMIT),
+  });
+};
+
+export const getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+  const title = new RegExp(searchQuery, 'i');
+  const posts = await Posts.find({
+    $or: [{ title }, { tags: { $in: tags?.split(',') } }],
+  });
+  res.status(StatusCodes.OK).json(posts);
+};
+
+export const getPost = async (req, res) => {
+  const { id } = req.params;
+  const post = await Posts.findById(id);
+  res.status(StatusCodes.OK).json(post);
+};
 
 export const createPost = async (req, res) => {
     const post = await Posts.create(req.body);

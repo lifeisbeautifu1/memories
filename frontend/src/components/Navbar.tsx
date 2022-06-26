@@ -45,7 +45,10 @@ const Navbar = () => {
           </button>
         </div>
       ) : (
-        <Link className="btn" to="/auth">
+        <Link
+          className="py-2 px-3 bg-gray-800 text-white font-bold transition duration-300 transform hover:scale-[0.97] capitalize shadow-md rounded-full"
+          to="/auth"
+        >
           Sign In
         </Link>
       )}

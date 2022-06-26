@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Post } from './postsSlice';
+import { Post, SearchQuery } from './postsSlice';
 
 const API = axios.create({ baseURL: 'http://localhost:5000/posts' });
 
@@ -13,9 +13,23 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-const getPosts = async () => {
-  const res = await API.get('/');
+const getPosts = async (page: number) => {
+  const res = await API.get(`/?page=${page}`);
   return res.data;
+};
+
+const getPost = async (id: string) => {
+  const res = await API.get('/' + id);
+  return res.data;
+};
+
+const getPostsBySearch = async (searchQuery: SearchQuery) => {
+  const { data } = await API.get(
+    `/search/?searchQuery=${searchQuery.searchTerm || 'none'}&tags=${
+      searchQuery.tags
+    }`
+  );
+  return data;
 };
 
 const createPost = async (postData: Post) => {
@@ -40,10 +54,12 @@ const editPost = async (postData: Post) => {
 
 const postsService = {
   getPosts,
+  getPost,
   createPost,
   deletePost,
   likePost,
   editPost,
+  getPostsBySearch,
 };
 
 export default postsService;

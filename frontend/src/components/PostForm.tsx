@@ -2,8 +2,19 @@ import React from 'react';
 import FileBase from 'react-file-base64';
 import { createPost, editPost, selectId } from '../features/posts/postsSlice';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { useNavigate } from 'react-router-dom';
 
-const initialState = {
+interface FormStateType {
+  name: string;
+  title: string;
+  message: string;
+  tags: string;
+  selectedFile: string;
+  likes: string[];
+  creator: string;
+}
+
+const initialState: FormStateType = {
   name: '',
   title: '',
   message: '',
@@ -28,13 +39,12 @@ const PostForm = () => {
           message: post?.message,
           tags: post?.tags.join(','),
           selectedFile: post?.selectedFile,
-          //@ts-ignore
           likes: post?.likes!,
           creator: user?.id!,
         });
       }
     }
-  }, [selectedId, posts]);
+  }, [selectedId, posts, user?.id, user?.name]);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -75,7 +85,7 @@ const PostForm = () => {
 
   if (!user) {
     return (
-      <div className="p-8 bg-white border border-gray-100 rounded-lg shadow-lg flex justify-center items-center">
+      <div className="p-8 bg-white border border-gray-100 rounded-lg shadow-lg flex items-start self-start">
         <h3 className="text-center font-bold text-xl">
           Please Sign In to create your own memories and like other memories!
         </h3>
@@ -83,9 +93,9 @@ const PostForm = () => {
     );
   }
   return (
-    <div className="flex justify-center items-start">
+    <div className="w-full flex justify-center items-start">
       <div
-        className="p-4 bg-white rounded shadow border border-gray-100
+        className="w-full p-4 bg-white rounded shadow border border-gray-100
     flex flex-col gap-4 overflow-hidden"
       >
         <h2 className="font-bold">{selectedId ? 'Edit' : 'Create'} Memory</h2>
@@ -119,7 +129,6 @@ const PostForm = () => {
 
           <div className="max-w-[250px]">
             <FileBase
-              type="file"
               multiple={false}
               //@ts-ignore
               onDone={({ base64 }) => {
